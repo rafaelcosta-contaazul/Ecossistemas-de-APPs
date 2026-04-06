@@ -1,6 +1,6 @@
-# 🚀 Funil de desenvolvedores e aplicativos Documentação Técnica
+#  Funil de desenvolvedores e aplicativos Documentação Técnica
 
-## 🧠 1. Visão Geral e Regras de Negócio
+##  1. Visão Geral e Regras de Negócio
 
 ### 1.1 Objetivo do Funil
 Consolidar a jornada completa do desenvolvedor, identificando gargalos técnicos e de negócio entre a criação do app e a primeira requisição válida em produção.
@@ -12,7 +12,7 @@ Consolidar a jornada completa do desenvolvedor, identificando gargalos técnicos
 
 ---
 
-## 🏗️ 2. Arquitetura de Dados (Linhagem)
+##  2. Arquitetura de Dados (Linhagem)
 
 | Alias | Tabela Original | Papel no Funil |
 | :--- | :--- | :--- |
@@ -24,9 +24,9 @@ Consolidar a jornada completa do desenvolvedor, identificando gargalos técnicos
 
 ---
 
-## 📋 3. Dicionário de Dados
+##  3. Dicionário de Dados
 
-### 📋 Dicionário de Dados (Campos da Query Final)
+###  Dicionário de Dados (Campos da Query Final)
 
 | Coluna | Regra de Negócio (Significado) | Lógica SQL (Cálculo) |
 | :--- | :--- | :--- |
