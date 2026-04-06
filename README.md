@@ -30,25 +30,29 @@ Consolidar a jornada completa do desenvolvedor, identificando gargalos técnicos
 
 ### 📋 Dicionário de Dados (Campos da Query Final)
 
-| Nome da Coluna | Regra de Negócio (O que significa) | Lógica SQL (Como é calculado) |
+| Coluna | Regra de Negócio (Significado) | Lógica SQL (Cálculo) |
 | :--- | :--- | :--- |
-| **id_desenvolvedor** | ID único do dev no portal. | Chave primária (`id`) da `public_consumer`. |
-| **dev_id_empresa** | ID da empresa vinculada ao dev. | `company_id` da base de consumidores. |
-| **dev_email** | E-mail de contato do dev (Exclui CA). | Filtro `NOT LIKE '%@contaazul.com%'`. |
-| **ts_conta_criada** | Data/hora do cadastro do dev. | Timestamp original filtrado em `D-1`. |
-| **is_icp** | Define se o dev é Cliente Ideal (Exposição Pública). | `CASE WHEN exposition_type = 'PUBLIC'`. |
-| **id_aplicativo** | Identificador único do app. | Deduplicado via `ROW_NUMBER` por ID. |
-| **client_id** | Chave pública do app para logs. | Chave de Join entre as bases de eventos. |
-| **nm_app** | Nome do aplicativo. | String original da `public_application`. |
-| **ts_app_criado** | Data de nascimento do aplicativo. | Timestamp de criação original. |
-| **app_environment** | Ambiente do aplicativo (PROD ou DEV). | `COALESCE` para normalizar `PRODUCTION`. |
-| **dt_primeira_tentativa** | Primeiro sinal de vida no Cognito. | `MIN(creation_date)` da sequência 1. |
-| **status_sucesso_final** | Status consolidado de autenticação. | Valida se existiu ao menos um 'Pass'. |
-| **flag_conecta_pme** | Identifica se o app é PME ou Robô. | `MAX(CASE)` se e-mail não contém `@devportal`. |
-| **ts_tent_primeira_req** | Primeiro hit na Apigee (Produção). | `MIN(created_at)` na Apigee. |
-| **total_requisicoes** | Volume de chamadas feitas na API. | `COUNT(*)` bruto na tabela Apigee. |
-| **flag_tentou_requisicao** | Registro de interação com a API. | Flag `1` se o app aparece na Apigee. |
-| **ts_primeiro_sucesso_pme** | 1º sucesso real com PME validada. | `MIN` com Status 2xx e Join ERP. |
-| **qtd_empresas_distintas** | Alcance de carteira (PMEs atendidas). | `COUNT(DISTINCT company_id)` com PME real. |
-| **flag_conectou_pme_real** | Sucesso Final de Negócio (O Troféu). | Flag `1` se atingiu todos os critérios PME. |
---
+| **id_desenvolvedor** | Identificador único do desenvolvedor no portal. | Chave primária (id) da tabela public_consumer. |
+| **dev_id_empresa** | ID da empresa vinculada à conta do desenvolvedor. | Coluna company_id da base de consumidores. |
+| **dev_email** | E-mail de contato do desenvolvedor (exclui @contaazul.com). | Filtro NOT LIKE aplicado na CTE inicial. |
+| **ts_conta_criada** | Data e hora em que o desenvolvedor se cadastrou no portal. | Timestamp original filtrado em D-1. |
+| **status_email** | Indica se o desenvolvedor confirmou a validade do e-mail. | Valor bruto da coluna email_verification_status. |
+| **preencheu_pag_intecao** | Define se o dev completou o perfil de intenção de uso. | Valor booleano da coluna has_complete_info. |
+| **is_icp** | Define se o desenvolvedor é o Cliente Ideal (Exposição Pública). | CASE WHEN exposition_type = 'PUBLIC' THEN TRUE. |
+| **id_aplicativo** | Identificador único do aplicativo criado. | Deduplicado via ROW_NUMBER para unicidade por ID. |
+| **client_id** | Chave pública do app usada para autenticação e rastreio de logs. | Chave natural de ligação entre tabelas de log. |
+| **nm_app** | Nome atribuído ao aplicativo pelo desenvolvedor. | String original da tabela public_application. |
+| **ts_app_criado** | Data e hora de nascimento do aplicativo. | Timestamp da primeira criação registrada no banco. |
+| **is_deleted** | Indica se o aplicativo foi deletado ou continua ativo. | Valor booleano de deleção lógica. |
+| **app_environment** | Normalização do ambiente de execução do aplicativo. | COALESCE para PROD ou DEV. |
+| **dt_primeira_tentativa** | Primeiro registro de atividade desse app no Cognito. | MIN(creation_date) da primeira linha (seq=1). |
+| **status_primeira_tentativa** | Resposta do sistema na 1ª tentativa de login. | Valor da coluna event_response na linha cronológica 1. |
+| **dt_sucesso_pass** | Data do primeiro status 'Pass' na história do app. | Window Function MIN(CASE WHEN ... = 'Pass'). |
+| **status_sucesso_final** | Resultado consolidado da jornada de autenticação. | Valida se existiu algum 'Pass' no histórico. |
+| **flag_conecta_pme** | Identifica se o app é usado por PME ou robôs de teste. | MAX(CASE) se e-mail não contém @devportal. |
+| **ts_tent_primeira_req** | Primeiro "batimento cardíaco" do app na Apigee (Produção). | MIN(created_at) agrupado por client_id. |
+| **total_requisicoes** | Volume total de chamadas que o app fez na API. | Contagem simples (COUNT(*)) de logs na Apigee. |
+| **flag_tentou_requisicao** | Marca se o app interagiu com a API (mesmo com erro). | Flag fixa 1 se o client_id estiver na Apigee. |
+| **ts_primeiro_sucesso_pme** | Data do primeiro sucesso real (Status 2xx) com PME. | MIN de data com Status 2xx e Join ERP. |
+| **qtd_empresas_distintas** | Quantidade de PMEs diferentes atendidas pelo app. | COUNT(DISTINCT company_id) após filtros de PME. |
+| **flag_conectou_pme_real** | Sucesso final: Conexão bem-sucedida de negócio. | Flag fixa 1 se atingiu todos os critérios PME/Sucesso. |
