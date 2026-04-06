@@ -1,6 +1,4 @@
-# 🚀 Funil de Ativação de Apps: Documentação Técnica
-
-Este repositório contém a inteligência de dados para análise dos ciclo dos desenvolvedores e aplicativos. O objetivo é monitorar a conversão desde o cadastro do desenvolvedor até o sucesso transacional com empresas reais (PME).
+# 🚀 Funil de desenvolvedores e aplicativos Documentação Técnica
 
 ## 🧠 1. Visão Geral e Regras de Negócio
 
@@ -8,7 +6,7 @@ Este repositório contém a inteligência de dados para análise dos ciclo dos d
 Consolidar a jornada completa do desenvolvedor, identificando gargalos técnicos e de negócio entre a criação do app e a primeira requisição válida em produção.
 
 ### 1.2 Premissas de Dados
-* **Granularidade:** 1 linha por aplicativo (`id_aplicativo` / `client_id`).
+* **Granularidade:** 1 linha por aplicativo (`client_id`).
 * **Relacionamento:** Um desenvolvedor pode possuir múltiplos aplicativos (**1:N**), mas cada aplicativo pertence a um único desenvolvedor (**1:1**).
 * **Tabela partida:** O ponto de entrada é a `public_consumer` (Desenvolvedores).
 
