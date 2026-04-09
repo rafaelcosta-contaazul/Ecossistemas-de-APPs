@@ -96,7 +96,7 @@ logs_resumidos AS (
         MIN(CAST(created_at AS DATE)) AS ts_primeiro_sucesso_pme
     FROM `contaazul-ssbi.silver_master_data.apigee_export_analytics`
     WHERE target_response_code BETWEEN 200 AND 299
-      AND created_at >= '2026-01-01'
+      
     GROUP BY 1, 2
 ),
 apigee_pme_real AS (
